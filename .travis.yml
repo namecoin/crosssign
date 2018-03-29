@@ -17,6 +17,6 @@ after_success:
 env:
   global:
     # GITHUB_TOKEN for automatic releases
-    - secure: "at1oJs7ib7glx3W+zk+OkT041LdknVXirIhN403CIihVUrlOhODY7yCTgvF4Rk0jYBJiT35Q2qxpgfWF2qGnsNsQmjG3ydDWQDCepDc/CgXfLyoiSTJK5vTK72dYWTVsBTycXbj1CbSy2X2ah/KWjc4RcgZ67ER7mDpRU5nFeow="
+    - secure: "M1+U77Uerf8qZTpzVPw1rUtJ+Dko4UtJvH5GRU8A8oXr0Oy11q3c1iiQ+af92EsRx7o9Vj9rvp2r11F7xGEKEkixrHM7n8mjOE6KDabElCspUMC8F4rOc2FoV7MJPhU1vNUQb+n2IbnsI+DbS6juBIEadt2E3aDMAvQAJMWLWMKMiT6OicFf/Z3bm/qCulhRIvSfqOc9rkSEsxcpkuUKCEUg7mSBi9vVLyaN69S5iyodl3/DT3pppGC8tmdKwc1++cPMmvMl2jj89NrspP/sbqYl/ugxW8UM6+9/Wj5R1UAgxn281B7UVl/t4f21r9QZbeZwuXP+VnKesc1dfvAcdwHuyIxrOVMrOgjhiXE6N+bDvaTAO7glUXxnyoX7F/R5l1w4D4yUveeql+vXvGI6dJ8kX+Pj99UB53fYUPkW6zAISNNT72IZwqGZM7XeNWrUlWjNqAB15+br0XxICHdR8QGsCp2V+HgoIsNBNg7khVkaCTEEyDcvi1EaLudDCdL+4idixYeQptXe/Mo195rmkk0YpyP1z4FTi1NufMBTdZNkp+/TLV2Bss7Bbl2PiIsweJJbW8CPj3N2G1gDrMMFSCrqPQl6gIHTIyapuNkOP96aIXI4+AEHXbM62qHRMSsieqDFVAP4W1T+lYMNgK+JJTj0N4IB6IbJGC4nRrOZceI="
     # Set this to the Go version to use for releases (must appear in version list above).
     - RELEASE_GO_VERSION="1.10"
