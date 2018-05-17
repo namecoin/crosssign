@@ -26,10 +26,13 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/rsa"
+	"crypto/sha256"
 	"crypto/x509"
 	"crypto/x509/pkix"
+	"encoding/hex"
 	"fmt"
 	"math/big"
+	"strings"
 )
 
 func publicKey(priv interface{}) interface{} {
@@ -46,6 +49,9 @@ func publicKey(priv interface{}) interface{} {
 // Returns cert, private key, error
 // nolint: lll
 func generateRootCA(commonNamePrefix string, originalDERBytes []byte) ([]byte, interface{}, error) {
+	fingerprintArray := sha256.Sum256(originalDERBytes)
+	hexFingerprint := strings.ToUpper(hex.EncodeToString(fingerprintArray[:]))
+
 	originalCert, err := x509.ParseCertificate(originalDERBytes)
 	if err != nil {
 		return nil, nil, fmt.Errorf("Error parsing original certificate: %s", err)
@@ -102,7 +108,7 @@ func generateRootCA(commonNamePrefix string, originalDERBytes []byte) ([]byte, i
 	template := x509.Certificate{
 		SerialNumber: serialNumber,
 		Subject: pkix.Name{
-			CommonName: commonNamePrefix + originalCert.Subject.CommonName,
+			CommonName: commonNamePrefix + originalCert.Subject.CommonName + " " + hexFingerprint,
 			// TODO: Maybe revise link in SerialNumber?
 			SerialNumber: "This certificate was created on this machine to apply a name constraint to an existing root CA.  Its private key was deleted immediately after the existing root CA was cross-signed.  For more information, see https://github.com/namecoin/crosssignnameconstraint",
 		},
