@@ -18,6 +18,14 @@ the name constraints (e.g. multiple exclusions, permitted DNS domain names, or
 non-DNS domain names) would be happily accepted and appreciated (even if it
 breaks API backward-compatibility).
 
+## Requirements
+
+crosssignnameconstraint requires Go 1.10.0 or higher.  Please note that
+crosssignnameconstraint will build in Go 1.9.x, but will behave
+[incorrectly](https://github.com/namecoin/crosssignnameconstraint/issues/2)
+(and we cannot guarantee that this incorrect behavior won't introduce security
+issues).
+
 ## Projects who use crosssignnameconstraint
 
 Send a pull request if you'd like to be included.
