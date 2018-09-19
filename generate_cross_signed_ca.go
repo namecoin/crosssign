@@ -111,7 +111,7 @@ func generateCrossSignedCA(originalDERBytes []byte, intermediateDERBytes []byte,
 	c.Raw = tbsCertContents
 
 	h := hashFunc.New()
-	h.Write(tbsCertContents) // nolint: errcheck, gas
+	h.Write(tbsCertContents) // nolint: errcheck, gas, gosec
 	digest := h.Sum(nil)
 
 	var signerOpts crypto.SignerOpts // nolint: megacheck
