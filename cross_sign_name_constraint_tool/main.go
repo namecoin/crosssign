@@ -65,6 +65,7 @@ func main() {
 			"Missing required --cert.input-root-ca-path parameter")
 	}
 
+	// #nosec G304
 	inputCADER, err := ioutil.ReadFile(inputCAPath)
 	if err != nil {
 		log.Fatalf("Couldn't read input CA: %s", err)
