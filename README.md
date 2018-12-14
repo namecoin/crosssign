@@ -1,48 +1,41 @@
-# crosssignnameconstraint
+# crosssign
 
-This tool applies a name constraint exclusion to a DER-encoded TLS trust
-anchor via cross-signing.  The intended use case is to disallow a CA from
-issuing certificates for a domain name that it has no legitimate business
-issuing certificates for.  For example:
+This library cross-signs a DER-encoded X.509 CA.  It doesn't require a
+signature or CSR from the CA to be cross-signed (meaning you can use it without
+the knowledge or permission of the CA to be cross-signed), and it doesn't try
+to parse the contents of either certificate (meaning you can use X.509 features
+that Go's standard library doesn't know how to parse, and they will be passed
+through intact).
 
-* Disallowing a public CA from issuing certificates for the `.bit` TLD used by
-Namecoin.
-* Disallowing a public CA from issuing certificates for a TLD controlled by
-your corporate intranet.
-* Disallowing your corporate intranet's CA from issuing certificates for a TLD
-allocated by ICANN.
-
-It currently only supports a single DNS domain name exclusion (because that's
-all that Namecoin needed).  Pull requests that add additional flexibility for
-the name constraints (e.g. multiple exclusions, permitted DNS domain names, or
-non-DNS domain names) would be happily accepted and appreciated (even if it
-breaks API backward-compatibility).
+A CLI tool is also provided.
 
 ## Requirements
 
-crosssignnameconstraint requires Go 1.10.0 or higher.  Please note that
-crosssignnameconstraint will build in Go 1.9.x, but will behave
-[incorrectly](https://github.com/namecoin/crosssignnameconstraint/issues/2)
-(and we cannot guarantee that this incorrect behavior won't introduce security
-issues).
+We haven't tested crosssign with Go versions below 1.10.0, and there is [reason
+to believe](https://github.com/namecoin/crosssignnameconstraint/issues/2) that
+Go 1.9.x handles X.509 parsing incorrectly.  It isn't clear whether the Go
+1.9.x issues impact crosssign, since crosssign doesn't try to parse most X.509
+features and is therefore immune to a lot of Go standard library issues.  That
+said, it's probably wise to only use crosssign with Go 1.10.0 and higher.
 
-## Projects who use crosssignnameconstraint
+## Projects who use crosssign
 
 Send a pull request if you'd like to be included.
 
+* [crosssignnameconstraint](https://github.com/namecoin/crosssignnameconstraint/)
 * [tlsrestrictnss](https://github.com/namecoin/tlsrestrictnss/)
 
 ## Licence
 
-crosssignnameconstraint is free software: you can redistribute it and/or modify
+crosssign is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-crosssignnameconstraint is distributed in the hope that it will be useful,
+crosssign is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with crosssignnameconstraint.  If not, see [https://www.gnu.org/licenses/](https://www.gnu.org/licenses/).
+along with crosssign.  If not, see [https://www.gnu.org/licenses/](https://www.gnu.org/licenses/).

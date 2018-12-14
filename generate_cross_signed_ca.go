@@ -3,23 +3,23 @@
 // Based on https://golang.org/src/crypto/x509/x509.go ,
 // Copyright 2009 The Go Authors.
 
-// This file is part of crosssignnameconstraint.
+// This file is part of crosssign.
 //
-// crosssignnameconstraint is free software: you can redistribute it and/or
+// crosssign is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// crosssignnameconstraint is distributed in the hope that it will be useful,
+// crosssign is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with crosssignnameconstraint.  If not, see
+// along with crosssign.  If not, see
 // <https://www.gnu.org/licenses/>.
 
-package crosssignnameconstraint
+package crosssign
 
 import (
 	"crypto"
@@ -55,30 +55,30 @@ type tbsCertificate struct {
 
 // Returns cert, error
 // nolint: lll
-func generateCrossSignedCA(originalDERBytes []byte, intermediateDERBytes []byte, intermediatePrivateKey interface{}) ([]byte, error) {
+func CrossSign(toSignDERBytes []byte, signerDERBytes []byte, signerPrivateKey interface{}) ([]byte, error) {
 	// Based on x509.ParseCertificate
-	var originalCert certificate
-	restOriginal, err := asn1.Unmarshal(originalDERBytes, &originalCert)
+	var toSignCert certificate
+	restToSign, err := asn1.Unmarshal(toSignDERBytes, &toSignCert)
 	if err != nil {
-		return nil, fmt.Errorf("Couldn't unmarshal original certificate: %s", err)
+		return nil, fmt.Errorf("Couldn't unmarshal certificate to sign: %s", err)
 	}
-	if len(restOriginal) > 0 {
-		return nil, fmt.Errorf("Trailing data in original certificate: %s", asn1.SyntaxError{Msg: "trailing data"})
+	if len(restToSign) > 0 {
+		return nil, fmt.Errorf("Trailing data in certificate to sign: %s", asn1.SyntaxError{Msg: "trailing data"})
 	}
 
 	// Based on x509.ParseCertificate
-	var intermediateCertASN1 certificate
-	restIntermediate, err := asn1.Unmarshal(intermediateDERBytes, &intermediateCertASN1)
+	var signerCertASN1 certificate
+	restSigner, err := asn1.Unmarshal(signerDERBytes, &signerCertASN1)
 	if err != nil {
-		return nil, fmt.Errorf("Couldn't unmarshal intermediate certificate: %s", err)
+		return nil, fmt.Errorf("Couldn't unmarshal signer certificate: %s", err)
 	}
-	if len(restIntermediate) > 0 {
-		return nil, fmt.Errorf("Trailing data in intermediate certificate: %s", asn1.SyntaxError{Msg: "trailing data"})
+	if len(restSigner) > 0 {
+		return nil, fmt.Errorf("Trailing data in signer certificate: %s", asn1.SyntaxError{Msg: "trailing data"})
 	}
 
 	// Based on CreateCertificate
 
-	key, ok := intermediatePrivateKey.(crypto.Signer)
+	key, ok := signerPrivateKey.(crypto.Signer)
 	if !ok {
 		return nil, errors.New("x509: certificate private key does not implement crypto.Signer")
 	}
@@ -92,14 +92,14 @@ func generateCrossSignedCA(originalDERBytes []byte, intermediateDERBytes []byte,
 	hashFunc := crypto.SHA256
 
 	c := tbsCertificate{
-		Version:            originalCert.TBSCertificate.Version,
+		Version:            toSignCert.TBSCertificate.Version,
 		SerialNumber:       serialNumber,
-		SignatureAlgorithm: intermediateCertASN1.TBSCertificate.SignatureAlgorithm,
-		Issuer:             intermediateCertASN1.TBSCertificate.Subject,
-		Validity:           originalCert.TBSCertificate.Validity,
-		Subject:            originalCert.TBSCertificate.Subject,
-		PublicKey:          originalCert.TBSCertificate.PublicKey,
-		Extensions:         originalCert.TBSCertificate.Extensions,
+		SignatureAlgorithm: signerCertASN1.TBSCertificate.SignatureAlgorithm,
+		Issuer:             signerCertASN1.TBSCertificate.Subject,
+		Validity:           toSignCert.TBSCertificate.Validity,
+		Subject:            toSignCert.TBSCertificate.Subject,
+		PublicKey:          toSignCert.TBSCertificate.PublicKey,
+		Extensions:         toSignCert.TBSCertificate.Extensions,
 		// TODO: Look into UniqueId and SubjectUniqueId.
 	}
 
@@ -126,7 +126,7 @@ func generateCrossSignedCA(originalDERBytes []byte, intermediateDERBytes []byte,
 	outputDER, err := asn1.Marshal(certificate{
 		nil,
 		c,
-		intermediateCertASN1.SignatureAlgorithm,
+		signerCertASN1.SignatureAlgorithm,
 		asn1.BitString{Bytes: signature, BitLength: len(signature) * 8},
 	})
 	if err != nil {
