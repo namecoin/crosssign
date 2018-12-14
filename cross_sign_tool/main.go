@@ -100,7 +100,10 @@ func main() {
 
 	// Parse the signer private key...
 
-	signerKey := x509.ParseECPrivateKey(signerKeyDER)
+	signerKey, err := x509.ParseECPrivateKey(signerKeyDER)
+	if err != nil {
+		log.Fatalf("Couldn't parse signer key: %s", err)
+	}
 
 	// Perform the cross-signing...
 
